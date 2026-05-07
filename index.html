@@ -361,10 +361,7 @@ textarea.rctl{min-height:40px;resize:vertical}
             <div></div>
             <div><label>Data inicio</label><input class="rctl" type="date" id="ri"></div>
             <div><label>Data fim</label><input class="rctl" type="date" id="rf"></div>
-            <div class="full" style="text-align:right;margin-top:3px"><button class="btn" style="background:#185FA5;color:#fff;border-color:#185FA5;height:27px;font-size:11px" onclick="addReg()">+ Adicionar</button></div>
-          </div>
-        </div>
-      </div>
+            <div class="full" style="text-align:right;margin-top:3px"><button class="btn" style
     </div>
     <div class="mft"><button class="btn" onclick="closeM()">Cancelar</button><button class="btn btn-g" onclick="saveM()">Salvar</button></div>
   </div>
@@ -1145,7 +1142,7 @@ async function carregarDados() {
     console.log("Dados carregados:", apiData.length);
 
     // substitui os dados globais do dashboard
-    window.data = apiData;
+    //window.data = apiData;
 
     // rerenderiza dashboard
     if (typeof rend === "function") {
