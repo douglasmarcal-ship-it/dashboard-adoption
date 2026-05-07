@@ -1149,39 +1149,49 @@ data = apiData.map(item => ({
   p: String(item["PARCEIRO"] || "").trim(),
 
   gl: String(
-       item["GO LIVE"] ||
-       item["GO LIVE (POS DEPLOY)"] ||
-       ""
-     ),
+      item["GO LIVE"] ||
+      item["GO LIVE (POS DEPLOY)"] ||
+      ""
+  ).trim(),
 
-  tipo: String(item["TIPO"] || "Empresarial"),
+  tipo: String(item["TIPO"] || "").trim(),
 
-  etapa: String(item["ETAPA"] || ""),
+  etapa: String(item["ETAPA"] || "").trim(),
 
-  termo: String(item["TERMOM."] || ""),
+  termo: String(item["TERMOM."] || "").trim(),
 
-  rb: String(item["ROLLBACK"] || "Nao")
-        .indexOf("Sim") !== -1 ? "Sim" : "Nao",
+  rb: String(item["ROLLBACK"] || "")
+        .toUpperCase()
+        .includes("SIM") ? "Sim" : "Nao",
 
-  cliente: String(item["CLIENTE"] || "Ativo"),
+  cliente: String(item["CLIENTE"] || "").trim(),
 
-  adop: String(item["ADOPTION"] || ""),
+  adop: String(item["ADOPTION"] || "")
+          .trim()
+          .toUpperCase(),
 
-  mrr: parseFloat(item["MRR ATUAL"] || 0) || 0,
+  mrr: Number(
+        String(item["MRR ATUAL"] || "0")
+          .replace(/[R$\s\.]/g, "")
+          .replace(",", ".")
+      ) || 0,
 
-  prazo: parseInt(item["PROGRESSO D+60"] || 0) || 0,
+  prazo: parseInt(
+            String(item["PROGRESSO D+60"] || "0")
+              .replace(/\D/g, "")
+          ) || 0,
 
-  bp: String(item["BP / PARCEIRO"] || ""),
+  bp: String(item["BP / PARCEIRO"] || "").trim(),
 
   seg: "",
 
   gp: "",
 
-  obs: String(item["OBSERVACAO"] || ""),
+  obs: String(item["OBSERVACAO"] || "").trim(),
 
   regs: []
 
-})).filter(function(r){
+})).filter(r => r.p);
 
   return r.p && r.gl;
 
