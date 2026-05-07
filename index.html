@@ -1146,22 +1146,46 @@ function processarDados(apiData) {
   // substitui os dados internos do dashboard
 data = apiData.map(item => ({
 
-  parceiro: item["PARCEIRO"] || "",
-  tipo: item["TIPO"] || "",
-  metodologia: item["METODOLOGIA"] || "",
-  goLive: item["GO LIVE"] || "",
-  progressoD60: item["PROGRESSO D+60"] || "",
-  etapa: item["ETAPA"] || "",
-  termometro: item["TERMOM."] || "",
-  rollback: item["ROLLBACK"] || "",
-  adoption: item["ADOPTION"] || "",
-  cliente: item["CLIENTE"] || "",
-  mrrAtual: item["MRR ATUAL"] || "",
-  goLivePosDeploy: item["GO LIVE (POS DEPLOY)"] || "",
-  bpParceiro: item["BP / PARCEIRO"] || "",
-  observacao: item["OBSERVACAO"] || ""
+  p: String(item["PARCEIRO"] || "").trim(),
 
-}));
+  gl: String(
+       item["GO LIVE"] ||
+       item["GO LIVE (POS DEPLOY)"] ||
+       ""
+     ),
+
+  tipo: String(item["TIPO"] || "Empresarial"),
+
+  etapa: String(item["ETAPA"] || ""),
+
+  termo: String(item["TERMOM."] || ""),
+
+  rb: String(item["ROLLBACK"] || "Nao")
+        .indexOf("Sim") !== -1 ? "Sim" : "Nao",
+
+  cliente: String(item["CLIENTE"] || "Ativo"),
+
+  adop: String(item["ADOPTION"] || ""),
+
+  mrr: parseFloat(item["MRR ATUAL"] || 0) || 0,
+
+  prazo: parseInt(item["PROGRESSO D+60"] || 0) || 0,
+
+  bp: String(item["BP / PARCEIRO"] || ""),
+
+  seg: "",
+
+  gp: "",
+
+  obs: String(item["OBSERVACAO"] || ""),
+
+  regs: []
+
+})).filter(function(r){
+
+  return r.p && r.gl;
+
+});
 
   // redesenha tudo
   rend();
