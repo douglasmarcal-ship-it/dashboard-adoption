@@ -1141,9 +1141,13 @@ rend();
 
 function processarDados(apiData) {
 
-  alert("DADOS RECEBIDOS: " + apiData.length);
-
   console.log("Dados carregados:", apiData);
+
+  // substitui os dados internos do dashboard
+  data = apiData;
+
+  // redesenha tudo
+  rend();
 
 }
 
@@ -1159,7 +1163,11 @@ function carregarDados() {
 
 }
 
+// carrega ao abrir
 carregarDados();
+
+// atualiza automático a cada 10 minutos
+setInterval(carregarDados, 600000);
 
 </script>
 </body>
