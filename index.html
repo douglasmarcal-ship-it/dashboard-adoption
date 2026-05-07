@@ -1144,7 +1144,24 @@ function processarDados(apiData) {
   console.log("Dados carregados:", apiData);
 
   // substitui os dados internos do dashboard
-  data = apiData;
+data = apiData.map(item => ({
+
+  parceiro: item["PARCEIRO"] || "",
+  tipo: item["TIPO"] || "",
+  metodologia: item["METODOLOGIA"] || "",
+  goLive: item["GO LIVE"] || "",
+  progressoD60: item["PROGRESSO D+60"] || "",
+  etapa: item["ETAPA"] || "",
+  termometro: item["TERMOM."] || "",
+  rollback: item["ROLLBACK"] || "",
+  adoption: item["ADOPTION"] || "",
+  cliente: item["CLIENTE"] || "",
+  mrrAtual: item["MRR ATUAL"] || "",
+  goLivePosDeploy: item["GO LIVE (POS DEPLOY)"] || "",
+  bpParceiro: item["BP / PARCEIRO"] || "",
+  observacao: item["OBSERVACAO"] || ""
+
+}));
 
   // redesenha tudo
   rend();
