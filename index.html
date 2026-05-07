@@ -1144,54 +1144,49 @@ function processarDados(apiData) {
   console.log("Dados carregados:", apiData);
 
   // substitui os dados internos do dashboard
-data = apiData.map(item => ({
+data = apiData.map(function(item){
 
-  p: String(item["PARCEIRO"] || "").trim(),
+  return {
 
-  gl: String(
+    p: String(item["PARCEIRO"] || "").trim(),
+
+    gl: String(
       item["GO LIVE"] ||
       item["GO LIVE (POS DEPLOY)"] ||
       ""
-  ).trim(),
+    ).trim(),
 
-  tipo: String(item["TIPO"] || "").trim(),
+    tipo: String(item["TIPO"] || "").trim(),
 
-  etapa: String(item["ETAPA"] || "").trim(),
+    etapa: String(item["ETAPA"] || "").trim(),
 
-  termo: String(item["TERMOM."] || "").trim(),
+    termo: String(item["TERMOM."] || "").trim(),
 
-  rb: String(item["ROLLBACK"] || "")
-        .toUpperCase()
-        .includes("SIM") ? "Sim" : "Nao",
+    rb: String(item["ROLLBACK"] || "")
+      .toUpperCase()
+      .includes("SIM") ? "Sim" : "Nao",
 
-  cliente: String(item["CLIENTE"] || "").trim(),
+    cliente: String(item["CLIENTE"] || "").trim(),
 
-  adop: String(item["ADOPTION"] || "")
-          .trim()
-          .toUpperCase(),
+    adop: String(item["ADOPTION"] || "")
+      .trim()
+      .toUpperCase(),
 
-  mrr: Number(
-        String(item["MRR ATUAL"] || "0")
-          .replace(/[R$\s\.]/g, "")
-          .replace(",", ".")
-      ) || 0,
+    mrr: 0,
 
-  prazo: parseInt(
-            String(item["PROGRESSO D+60"] || "0")
-              .replace(/\D/g, "")
-          ) || 0,
+    prazo: 0,
 
-  bp: String(item["BP / PARCEIRO"] || "").trim(),
+    bp: String(item["BP / PARCEIRO"] || "").trim(),
 
-  seg: "",
+    seg: "",
 
-  gp: "",
+    gp: "",
 
-  obs: String(item["OBSERVACAO"] || "").trim(),
+    obs: String(item["OBSERVACAO"] || "").trim(),
 
-  regs: []
+    regs: []
 
-})).filter(r => r.p);
+  };
 
 });
 
