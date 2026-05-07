@@ -1166,38 +1166,34 @@ setInterval(carregarDados, 600000);
 <script>
 console.log("SCRIPT INICIADO");
 
-async function carregarDados() {
-  try {
+function processarDados(apiData) {
 
-    console.log("Buscando API...");
+  console.log("Dados carregados:", apiData);
 
-    const response = await fetch("https://script.google.com/macros/s/AKfycbz7CqM-PRU-aJm2h0eRW_cw5bcDjky_k1cZ7GpMeNe67T1IjkwhkcajI4OT_u6a9b946Q/exec");
+  // substitui dados globais
+  window.data = apiData;
 
-    const apiData = await response.json();
-
-    console.log("Dados carregados:", apiData);
-
-    // 🔥 substitui dados do dashboard
-    window.data = apiData;
-
-    // 🔥 atualiza dashboard
-    if (typeof rend === "function") {
-      console.log("Executando rend()");
-      rend();
-    } else {
-      console.log("Função rend não encontrada");
-    }
-
-  } catch (erro) {
-    console.error("Erro API:", erro);
+  // atualiza dashboard
+  if (typeof rend === "function") {
+    console.log("Executando rend()");
+    rend();
+  } else {
+    console.log("Função rend não encontrada");
   }
 }
 
+function carregarDados() {
+
+  console.log("Buscando API...");
+
+  const script = document.createElement("script");
+
+  script.src = "https://script.google.com/macros/s/AKfycbwy8nrfrJ83bvvEurzS09sOGZHzMga2i645QxSBHQh0/exec?callback=processarDados";
+
+  document.body.appendChild(script);
+}
+
 carregarDados();
-
-// atualiza a cada 10 min
-setInterval(carregarDados, 600000);
-
 </script>
 </body> 
 </html>
