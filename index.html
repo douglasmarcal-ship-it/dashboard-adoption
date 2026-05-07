@@ -1139,9 +1139,9 @@ rend();
 </script>
 <script>
 
-console.log("API SCRIPT INICIADO");
-
 function processarDados(apiData) {
+
+  alert("DADOS RECEBIDOS: " + apiData.length);
 
   console.log("Dados carregados:", apiData);
 
@@ -1153,7 +1153,7 @@ function carregarDados() {
 
   const script = document.createElement("script");
 
-  script.src = "https://script.google.com/a/macros/sankhya.com.br/s/AKfycbzDls5iQGIO1tWicPl3rpQPwiH0hJCtYk0F-umjsYlwOx-7J1ydRQLMeO3ulnbcvKdUUQ/exec";
+  script.src = "https://script.google.com/macros/s/AKfycbzDls5iQGIO1tWicPl3rpQPwiH0hJCtYk0F-umjsYlwOx-7J1ydRQLMeO3ulnbcvKdUUQ/exec?callback=processarDados";
 
   document.body.appendChild(script);
 
