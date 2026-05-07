@@ -1138,8 +1138,29 @@ function rend(){ var f=getFlt(); bldKPI(f); bldAlr(f); bldFlt(); bldTbl(getFilte
 rend();
 </script>
 <script>
-alert("TESTE OK");
-console.log("TESTE CONSOLE");
+
+console.log("API SCRIPT INICIADO");
+
+function processarDados(apiData) {
+
+  console.log("Dados carregados:", apiData);
+
+}
+
+function carregarDados() {
+
+  console.log("Buscando API...");
+
+  const script = document.createElement("script");
+
+  script.src = "https://script.google.com/macros/s/AKfycbz7CqM-PRU-aJm2h0eRW_cw5bcDjky_k1cZ7GpMeNe67T1IjkwhkcajI4OT_u6a9b946Q/exec?callback=processarDados";
+
+  document.body.appendChild(script);
+
+}
+
+carregarDados();
+
 </script>
 </body>
 </html>
