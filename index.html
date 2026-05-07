@@ -1172,9 +1172,16 @@ data = apiData.map(function(item){
       .trim()
       .toUpperCase(),
 
-    mrr: 0,
+mrr: parseFloat(
+  String(item["MRR ATUAL"] || "0")
+    .replace(/[R$\.\s]/g, "")
+    .replace(",", ".")
+) || 0,
 
-    prazo: 0,
+prazo: parseInt(
+  String(item["PROGRESSO D+60"] || "0")
+    .replace(/\D/g, "")
+) || 0,,
 
     bp: String(item["BP / PARCEIRO"] || "").trim(),
 
