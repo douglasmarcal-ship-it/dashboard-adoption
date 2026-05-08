@@ -1221,5 +1221,117 @@ carregarDados();
 setInterval(carregarDados, 600000);
 
 </script>
+  <script>
+
+function processarDados(apiData){
+
+  console.log("Dados API:", apiData);
+
+  var newData = apiData.map(function(r){
+
+    return {
+
+      p: String(r["PARCEIRO"] || "").trim(),
+
+      gl: String(
+        r["GO LIVE"] ||
+        r["Dt. Go-Live (Efetivo)"] ||
+        ""
+      ).slice(0,10),
+
+      tipo: String(r["TIPO"] || "Empresarial"),
+
+      etapa: String(
+        r["ETAPA"] ||
+        r["Etapa Jornada"] ||
+        ""
+      ),
+
+      termo: String(r["TERMOM."] || "verde")
+                .toLowerCase(),
+
+      rb: String(r["ROLLBACK"] || "Nao")
+            .indexOf("Sim") !== -1
+              ? "Sim"
+              : "Nao",
+
+      cliente: String(r["CLIENTE"] || "Ativo"),
+
+      adop: String(
+        r["ADOPTION"] ||
+        r["Status Adoptiom"] ||
+        ""
+      ),
+
+      mrr: parseFloat(r["MRR ATUAL"] || 0) || 0,
+
+      prazo: parseInt(
+        r["PROGRESSO D+60"] || 0
+      ) || 0,
+
+      bp: String(
+        r["BP / PARCEIRO"] ||
+        r["Descricao"] ||
+        ""
+      ),
+
+      seg: String(
+        r["SEGMENTO"] ||
+        ""
+      ),
+
+      gp: "",
+
+      obs: String(
+        r["OBSERVACAO"] ||
+        r["Observacao"] ||
+        ""
+      ),
+
+      regs: []
+
+    };
+
+  }).filter(function(r){
+
+    return r.p && r.gl;
+
+  });
+
+  console.log("NEW DATA:", newData);
+
+  data = newData;
+
+  document.getElementById("bup").textContent =
+    "Google Sheets | " + data.length + " clientes";
+
+  rend();
+
+  if(document.getElementById("p2").classList.contains("on")){
+    bldCh(data);
+  }
+
+  console.log("Dashboard atualizado!");
+
+}
+
+function carregarDados(){
+
+  console.log("Buscando API...");
+
+  const script = document.createElement("script");
+
+  script.src =
+    "https://script.google.com/macros/s/AKfycbzDls5iQGIO1tWicPl3rpQPwiH0hJCtYk0F-umjsYlwOx-7J1ydRQLMeO3ulnbcvKdUUQ/exec?callback=processarDados";
+
+  document.body.appendChild(script);
+
+}
+
+carregarDados();
+
+setInterval(carregarDados, 300000);
+
+</script>
 </body>
 </html>
