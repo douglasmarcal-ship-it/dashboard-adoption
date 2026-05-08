@@ -1221,81 +1221,83 @@ carregarDados();
 setInterval(carregarDados, 600000);
 
 </script>
-  <script>
+ <script>
 
 function processarDados(apiData){
 
-  console.log("Dados API:", apiData);
-  console.log("Primeiro registro:", apiData[0]);
+  console.log("API recebida:", apiData);
 
-  var newData = apiData.map(function(r){
+  var newData = [];
 
-    return {
+  apiData.forEach(function(r){
 
-      p: String(r["PARCEIRO"] || "").trim(),
+    var keys = Object.keys(r);
 
-      gl: String(
-        r["GO LIVE"] ||
-        r["Dt. Go-Live (Efetivo)"] ||
-        ""
-      ).slice(0,10),
+    var parceiro = "";
+    var gl = "";
+    var etapa = "";
+    var termo = "verde";
 
-      tipo: String(r["TIPO"] || "Empresarial"),
+    keys.forEach(function(k){
 
-      etapa: String(
-        r["ETAPA"] ||
-        r["Etapa Jornada"] ||
-        ""
-      ),
+      var val = String(r[k] || "").trim();
 
-      termo: String(r["TERMOM."] || "verde")
-                .toLowerCase(),
+      // parceiro
+      if(
+        val.length > 4 &&
+        !val.includes("202") &&
+        !val.includes("🟢") &&
+        !val.includes("🟡") &&
+        !val.includes("🔴") &&
+        !val.includes("Projeto") &&
+        !val.includes("Acompanhamento")
+      ){
+        parceiro = val;
+      }
 
-      rb: String(r["ROLLBACK"] || "Nao")
-            .indexOf("Sim") !== -1
-              ? "Sim"
-              : "Nao",
+      // data
+      if(val.includes("2025-") || val.includes("2026-")){
+        gl = val.slice(0,10);
+      }
 
-      cliente: String(r["CLIENTE"] || "Ativo"),
+      // etapa
+      if(
+        val.includes("Projeto") ||
+        val.includes("Acompanhamento")
+      ){
+        etapa = val;
+      }
 
-      adop: String(
-        r["ADOPTION"] ||
-        r["Status Adoptiom"] ||
-        ""
-      ),
+      // termometro
+      if(val.includes("🟢")) termo = "verde";
+      if(val.includes("🟡")) termo = "amarelo";
+      if(val.includes("🔴")) termo = "vermelho";
 
-      mrr: parseFloat(r["MRR ATUAL"] || 0) || 0,
+    });
 
-      prazo: parseInt(
-        r["PROGRESSO D+60"] || 0
-      ) || 0,
+    if(parceiro){
 
-      bp: String(
-        r["BP / PARCEIRO"] ||
-        r["Descricao"] ||
-        ""
-      ),
+      newData.push({
 
-      seg: String(
-        r["SEGMENTO"] ||
-        ""
-      ),
+        p: parceiro,
+        gl: gl,
+        tipo: "Empresarial",
+        etapa: etapa || "Projeto Inicial",
+        termo: termo,
+        rb: "Nao",
+        cliente: "Ativo",
+        adop: "Em monitoramento",
+        mrr: 0,
+        prazo: 0,
+        bp: "",
+        seg: "",
+        gp: "",
+        obs: "",
+        regs: []
 
-      gp: "",
+      });
 
-      obs: String(
-        r["OBSERVACAO"] ||
-        r["Observacao"] ||
-        ""
-      ),
-
-      regs: []
-
-    };
-
-  }).filter(function(r){
-
-
+    }
 
   });
 
@@ -1333,6 +1335,6 @@ carregarDados();
 
 setInterval(carregarDados, 300000);
 
-</script>
+</script> 
 </body>
 </html>
