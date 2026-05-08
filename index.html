@@ -1226,6 +1226,7 @@ setInterval(carregarDados, 600000);
 function processarDados(apiData){
 
   console.log("Dados API:", apiData);
+  console.log("Primeiro registro:", apiData[0]);
 
   var newData = apiData.map(function(r){
 
