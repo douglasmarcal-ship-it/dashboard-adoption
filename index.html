@@ -457,6 +457,10 @@ async function carregarDados() {
 
   }));
 
+   renderDashboard();
+
+}
+
 carregarDados();
 var data = DATA.map(function(r){ var o={}; for(var k in r) o[k]=r[k]; o.regs=[]; return o; });
 var SC="gl", SA=false, EI=-1, PR=[], CH={};
