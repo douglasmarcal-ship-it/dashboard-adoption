@@ -419,7 +419,7 @@ async function carregarDados() {
 
   try {
 
-    const response = await fetch(API_URL);
+    const response = awaitp fetch(API_URL);
 
     const dados = await response.json();
 
@@ -1132,6 +1132,57 @@ function bldCompChart(d,calc){
     "<span><span class='lsq' style='background:rgba(245,158,11,.6)'></span>Adoption ativo no mes</span>"+
     (hasPrev?"<span><span class='lsq' style='background:#fcd34d'></span>Previsao GL</span>":"");
   if(CH.cComp)CH.cComp.destroy();
+const mc_in = {};
+const mc_out = {};
+const mc_active = {};
+const mc_prev = {};
+const allM = [];
+
+DATA.forEach(d => {
+
+  // usa Go Live previsto
+  const dataBase = d.gl_prev || d.gl;
+
+  if (!dataBase) return;
+
+  const dt = new Date(dataBase);
+
+  const mes =
+    dt.getFullYear() +
+    "-" +
+    String(dt.getMonth() + 1).padStart(2, "0");
+
+  if (!allM.includes(mes)) {
+    allM.push(mes);
+  }
+
+  // Entradas
+  mc_in[mes] = (mc_in[mes] || 0) + 1;
+
+  // Adoption ativo
+  if (
+    d.etapa &&
+    d.etapa.toLowerCase().includes("adoption")
+  ) {
+    mc_active[mes] =
+      (mc_active[mes] || 0) + 1;
+  }
+
+  // Previsão Go Live
+  if (d.gl_prev) {
+    mc_prev[mes] =
+      (mc_prev[mes] || 0) + 1;
+  }
+
+  // Saídas
+  if (d.gl) {
+    mc_out[mes] =
+      (mc_out[mes] || 0) + 1;
+  }
+
+});
+
+allM.sort();
   CH.cComp=new Chart(document.getElementById("cComp"),{
     type:"bar",
     data:{
