@@ -415,14 +415,17 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 <script>
 var DATA = [];
 const API_URL = "https://script.google.com/macros/s/AKfycbyomj4_vR7IKgVuhLZKhRVtHwGnvT1RFknEAI0lNhv8hYS4ftwyLDHSGG4tudruIjedcw/exec";
-
 async function carregarDados() {
 
-  const response = await fetch(API_URL);
+  try {
 
-  const dados = await response.json();
+    const response = await fetch(API_URL);
 
-  DATA = dados.map(item => ({
+    const dados = await response.json();
+
+    console.log("Dados API:", dados);
+
+    DATA = dados.map(item => ({
 
       p: item.parceiro || "",
       tipo: item.tipo || "",
@@ -455,11 +458,18 @@ async function carregarDados() {
 
       term: item.termometro || ""
 
-  }));
+    }));
 
-   renderDashboard();
+    renderDashboard();
+
+  } catch (erro) {
+
+    console.error("Erro API:", erro);
+
+  }
 
 }
+
 
 carregarDados();
 var data = DATA.map(function(r){ var o={}; for(var k in r) o[k]=r[k]; o.regs=[]; return o; });
