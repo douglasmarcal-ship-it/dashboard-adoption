@@ -416,17 +416,46 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 var DATA = [];
 const API_URL = "https://script.google.com/macros/s/AKfycbyomj4_vR7IKgVuhLZKhRVtHwGnvT1RFknEAI0lNhv8hYS4ftwyLDHSGG4tudruIjedcw/exec";
 
-async function carregarDados(){
+async function carregarDados() {
 
-    const response = await fetch(API_URL);
+  const response = await fetch(API_URL);
 
-    const dados = await response.json();
+  const dados = await response.json();
 
-    DATA = dados;
+  DATA = dados.map(item => ({
 
-    render();
+      p: item.parceiro || "",
+      tipo: item.tipo || "",
+      metod: item.metodologia || "",
 
-}
+      gl: item.gl_efetivo || "",
+      gl_prev: item.gl_previsto || "",
+
+      etapa: item.etapa || "",
+
+      bp: item.descricao || "",
+
+      prazo: Number(item.prazo) || 0,
+
+      rb: item.rollback || "",
+
+      cliente: item.status_cliente || "",
+
+      mrr: Number(item.mrr) || 0,
+
+      adop: item.adoption || "",
+
+      obs: item.observacao || "",
+
+      seg: item.segmento || "",
+
+      ocorr: item.ocorrencia || "",
+
+      tipo_inc: item.tipo_incidente || "",
+
+      term: item.termometro || ""
+
+  }));
 
 carregarDados();
 var data = DATA.map(function(r){ var o={}; for(var k in r) o[k]=r[k]; o.regs=[]; return o; });
