@@ -2,7 +2,7 @@ name: Atualizar Dados do Dashboard
 
 on:
   schedule:
-   - cron: '*/10 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -26,9 +26,10 @@ jobs:
           import pandas as pd
           import json
           import re
+          from datetime import datetime
 
           # 1. COLOQUE O SEU LINK DA PLANILHA AQUI DENTRO DAS ASPAS:
-          url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTDOeEqui_w4j0bSUh9zPz-1yXOAxUB3RT4glNpD1rJzgd01oE61rXmOCVoUMjWzDNph4lsGPFIyC7e/pub?gid=0&single=true&output=csv'
+          url = 'COLE_AQUI_O_LINK_DA_SUA_PLANILHA'
           
           df = pd.read_csv(url, skiprows=1)
           df = df.fillna('')
