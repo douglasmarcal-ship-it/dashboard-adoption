@@ -1765,7 +1765,7 @@ setInterval(function() {
     });
   }
 }, 800);
-  // --- INÍCIO DO CRONÔMETRO E LIMPEZA VISUAL ---
+// --- INÍCIO DO CRONÔMETRO E LIMPEZA VISUAL (Isolado) ---
 (function() {
     // 1. Limpeza Forçada: Caça e esconde botões e textos indesejados
     document.querySelectorAll('button, label').forEach(el => {
@@ -1806,7 +1806,7 @@ setInterval(function() {
         seg = seg < 10 ? '0' + seg : seg; 
 
         if (painelAviso) {
-            painelAviso.innerHTML = `🟢 ONLINE | Nova Atualização em: <b>${min}:${seg}</b>`;
+            painelAviso.innerHTML = `🟢 ONLINE | Nova leitura da planilha em: <b>${min}:${seg}</b>`;
         }
         
         if (tempoRestante <= 0) {
