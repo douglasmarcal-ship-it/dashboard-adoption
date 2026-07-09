@@ -1808,7 +1808,7 @@ setInterval(() => {
 
     // Atualiza a tela com o cronômetro
     if (bup) {
-        bup.innerHTML = `🟢 ONLINE | DASHBOARD SERÁ ATUALIZADO EM: <b>${min}:${seg}</b>`;
+        bup.innerHTML = `🟢 ONLINE | Nova leitura da planilha em: <b>${min}:${seg}</b>`;
     }
     
     // Recarrega a página ao zerar
@@ -1821,7 +1821,6 @@ setInterval(() => {
         window.location.href = window.location.pathname + '?t=' + new Date().getTime();
     }
 }, 1000);
-// --- FIM DO CRONÔMETRO ---
-  
+// --- FIM DO CRONÔMETRO ---  
  </script>
 </body></html>
