@@ -1765,38 +1765,9 @@ setInterval(function() {
     });
   }
 }, 800);
-// --- INÍCIO DO CRONÔMETRO E LIMPEZA VISUAL (Isolado) ---
+  // --- INÍCIO DO CRONÔMETRO INOFENSIVO ---
 (function() {
-    // 1. Limpeza Forçada: Caça e esconde botões e textos indesejados
-    document.querySelectorAll('button, label').forEach(el => {
-        const textoBotao = el.innerText ? el.innerText.toLowerCase() : '';
-        if (textoBotao.includes('importar') || textoBotao.includes('salvar')) {
-            el.style.display = 'none'; // Esconde botões
-        }
-    });
-    document.querySelectorAll('input[type="file"]').forEach(el => el.style.display = 'none');
-
-    document.querySelectorAll('div, span, p, small').forEach(el => {
-        if (el.innerText && el.innerText.includes('Atualizado em') && el.children.length === 0) {
-            el.style.display = 'none'; // Esconde a frase antiga
-        }
-    });
-
-    // 2. Estilização do Cronômetro (Visão Neon)
-    const painelAviso = document.getElementById('bup');
-    if (painelAviso) {
-        painelAviso.style.color = '#00FF00'; // Verde brilhante
-        painelAviso.style.fontWeight = '900'; 
-        painelAviso.style.fontSize = '1.1rem'; 
-        painelAviso.style.backgroundColor = 'rgba(0, 40, 0, 0.8)'; 
-        painelAviso.style.padding = '8px 15px'; 
-        painelAviso.style.borderRadius = '8px'; 
-        painelAviso.style.border = '1px solid #00FF00'; 
-        painelAviso.style.boxShadow = '0 0 10px rgba(0, 255, 0, 0.4)'; 
-    }
-
-    // 3. Lógica do Cronômetro (10 minutos)
-    let tempoRestante = 600; 
+    let tempoRestante = 600; // 10 minutos (600 segundos)
 
     setInterval(() => {
         tempoRestante--;
@@ -1805,20 +1776,22 @@ setInterval(function() {
         let seg = tempoRestante % 60;
         seg = seg < 10 ? '0' + seg : seg; 
 
+        const painelAviso = document.getElementById('bup');
         if (painelAviso) {
-            painelAviso.innerHTML = `🟢 ONLINE | Nova leitura da planilha em: <b>${min}:${seg}</b>`;
+            // Apenas pinta o texto de verde e atualiza o tempo, sem esconder nada
+            painelAviso.style.color = '#00FF00'; 
+            painelAviso.innerHTML = `🟢 ONLINE | Nova leitura em: <b>${min}:${seg}</b>`;
         }
         
         if (tempoRestante <= 0) {
             if (painelAviso) {
-                painelAviso.style.color = '#FFA500'; 
-                painelAviso.style.borderColor = '#FFA500';
-                painelAviso.innerHTML = "🔄 SINCRONIZANDO DADOS...";
+                painelAviso.innerHTML = "🔄 SINCRONIZANDO...";
             }
-            window.location.href = window.location.pathname + '?t=' + new Date().getTime();
+            // Recarrega a página de forma limpa
+            window.location.reload(true);
         }
     }, 1000);
 })();
-// --- FIM DO CRONÔMETRO ---
+// --- FIM DO CRONÔMETRO INOFENSIVO ---
  </script>
 </body></html>
