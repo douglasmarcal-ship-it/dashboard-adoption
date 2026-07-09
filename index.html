@@ -1765,62 +1765,60 @@ setInterval(function() {
     });
   }
 }, 800);
-// --- INÍCIO DO CRONÔMETRO E LIMPEZA VISUAL ---
-
-// 1. Limpeza Forçada: Caça e esconde botões e textos indesejados
-document.querySelectorAll('button, label').forEach(el => {
-    const texto = el.innerText ? el.innerText.toLowerCase() : '';
-    if (texto.includes('importar') || texto.includes('salvar')) {
-        el.style.display = 'none'; // Esconde botões de importar/salvar
-    }
-});
-document.querySelectorAll('input[type="file"]').forEach(el => el.style.display = 'none');
-
-document.querySelectorAll('div, span, p, small').forEach(el => {
-    if (el.innerText && el.innerText.includes('Atualizado em') && el.children.length === 0) {
-        el.style.display = 'none'; // Esconde a frase de atualização antiga
-    }
-});
-
-// 2. Estilização do Cronômetro (Visão Neon)
-const bup = document.getElementById('bup');
-if (bup) {
-    bup.style.color = '#00FF00'; // Verde brilhante
-    bup.style.fontWeight = '900'; // Fonte mais grossa
-    bup.style.fontSize = '1.1rem'; // Fonte maior
-    bup.style.backgroundColor = 'rgba(0, 40, 0, 0.8)'; // Fundo verde escuro para dar contraste
-    bup.style.padding = '8px 15px'; // Espaço em volta do texto
-    bup.style.borderRadius = '8px'; // Bordas arredondadas
-    bup.style.border = '1px solid #00FF00'; // Linha de borda brilhante
-    bup.style.boxShadow = '0 0 10px rgba(0, 255, 0, 0.4)'; // Efeito leve de brilho
-}
-
-// 3. Lógica do Cronômetro (10 minutos)
-let tempoRestante = 600; 
-
-setInterval(() => {
-    tempoRestante--;
-    
-    // Calcula minutos e segundos
-    let min = Math.floor(tempoRestante / 60);
-    let seg = tempoRestante % 60;
-    seg = seg < 10 ? '0' + seg : seg; // Adiciona o zero (ex: 09, 05)
-
-    // Atualiza a tela com o cronômetro
-    if (bup) {
-        bup.innerHTML = `🟢 ONLINE | Nova leitura da planilha em: <b>${min}:${seg}</b>`;
-    }
-    
-    // Recarrega a página ao zerar
-    if (tempoRestante <= 0) {
-        if (bup) {
-            bup.style.color = '#FFA500'; // Fica laranja ao sincronizar
-            bup.style.borderColor = '#FFA500';
-            bup.innerHTML = "🔄 SINCRONIZANDO DADOS...";
+  // --- INÍCIO DO CRONÔMETRO E LIMPEZA VISUAL ---
+(function() {
+    // 1. Limpeza Forçada: Caça e esconde botões e textos indesejados
+    document.querySelectorAll('button, label').forEach(el => {
+        const textoBotao = el.innerText ? el.innerText.toLowerCase() : '';
+        if (textoBotao.includes('importar') || textoBotao.includes('salvar')) {
+            el.style.display = 'none'; // Esconde botões
         }
-        window.location.href = window.location.pathname + '?t=' + new Date().getTime();
+    });
+    document.querySelectorAll('input[type="file"]').forEach(el => el.style.display = 'none');
+
+    document.querySelectorAll('div, span, p, small').forEach(el => {
+        if (el.innerText && el.innerText.includes('Atualizado em') && el.children.length === 0) {
+            el.style.display = 'none'; // Esconde a frase antiga
+        }
+    });
+
+    // 2. Estilização do Cronômetro (Visão Neon)
+    const painelAviso = document.getElementById('bup');
+    if (painelAviso) {
+        painelAviso.style.color = '#00FF00'; // Verde brilhante
+        painelAviso.style.fontWeight = '900'; 
+        painelAviso.style.fontSize = '1.1rem'; 
+        painelAviso.style.backgroundColor = 'rgba(0, 40, 0, 0.8)'; 
+        painelAviso.style.padding = '8px 15px'; 
+        painelAviso.style.borderRadius = '8px'; 
+        painelAviso.style.border = '1px solid #00FF00'; 
+        painelAviso.style.boxShadow = '0 0 10px rgba(0, 255, 0, 0.4)'; 
     }
-}, 1000);
-// --- FIM DO CRONÔMETRO ---  
+
+    // 3. Lógica do Cronômetro (10 minutos)
+    let tempoRestante = 600; 
+
+    setInterval(() => {
+        tempoRestante--;
+        
+        let min = Math.floor(tempoRestante / 60);
+        let seg = tempoRestante % 60;
+        seg = seg < 10 ? '0' + seg : seg; 
+
+        if (painelAviso) {
+            painelAviso.innerHTML = `🟢 ONLINE | Nova Atualização em: <b>${min}:${seg}</b>`;
+        }
+        
+        if (tempoRestante <= 0) {
+            if (painelAviso) {
+                painelAviso.style.color = '#FFA500'; 
+                painelAviso.style.borderColor = '#FFA500';
+                painelAviso.innerHTML = "🔄 SINCRONIZANDO DADOS...";
+            }
+            window.location.href = window.location.pathname + '?t=' + new Date().getTime();
+        }
+    }, 1000);
+})();
+// --- FIM DO CRONÔMETRO ---
  </script>
 </body></html>
