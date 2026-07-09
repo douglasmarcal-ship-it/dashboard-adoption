@@ -2,19 +2,25 @@ name: Atualizar Dados do Dashboard
 
 on:
   schedule:
-    - cron: '0 * * * *' # Executa de 1 em 1 hora
-  workflow_dispatch: # Permite rodar manualmente num botão
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+# Esta linha garante que o robô tem permissão para salvar o dados.json
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+    # Atualizado para v4 (Remove o aviso do Node.js)
     - name: Checkout do repositorio
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
+    # Atualizado para v5 (Remove o aviso do Node.js)
     - name: Configurar Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.x'
 
@@ -28,7 +34,7 @@ jobs:
         import json
         
         # COLOQUE O SEU LINK ENTRE AS ASPAS SIMPLES ABAIXO:
-        url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTDOeEqui_w4j0bSUh9zPz-1yXOAxUB3RT4glNpD1rJzgd01oE61rXmOCVoUMjWzDNph4lsGPFIyC7e/pub?gid=0&single=true&output=csv'
+        url = 'COLE_AQUI_O_LINK_DA_SUA_PLANILHA'
         
         df = pd.read_csv(url, skiprows=1)
         df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
