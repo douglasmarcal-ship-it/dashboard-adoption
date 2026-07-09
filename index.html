@@ -1744,23 +1744,55 @@ if(document.getElementById("p2")&&document.getElementById("p2").classList.contai
 fetch('dados.json?t=' + new Date().getTime())
   .then(response => response.json())
   .then(jsonData => {
-    // 1. Substitui os dados estáticos do Claude pelos dados vivos do robô
-    data = jsonData.filter(item => item && item['PARCEIRO'] && item['PARCEIRO'] !== 'PARCEIRO' && !String(item['PARCEIRO']).includes('Media d'));
-    
-    // 2. Atualiza o texto lá no topo da tela
+    // 1. Filtra as linhas vazias
+    const dadosLimpos = jsonData.filter(item => item && item['PARCEIRO'] && item['PARCEIRO'] !== 'PARCEIRO' && !String(item['PARCEIRO']).includes('Media d'));
+
+    // 2. TRADUTOR: Atualiza a variável PRINCIPAL (MAIÚSCULA) do seu painel
+    DATA = dadosLimpos.map(item => {
+      let termo = String(item['ID'] || item['Termometro'] || '').toLowerCase();
+      if (termo.includes('verde') || termo.includes('🟢')) termo = 'verde';
+      else if (termo.includes('amarelo') || termo.includes('🟡')) termo = 'amarelo';
+      else if (termo.includes('vermelho') || termo.includes('🔴')) termo = 'vermelho';
+      else termo = 'verde';
+
+      return {
+        p: item['PARCEIRO'] || "",
+        tipo: item['Tipo'] || "",
+        metod: item['Metodologia'] || "",
+        fimadop: item['Dt. Previsão Entrega'] || "",
+        e: item['Etapa Jornada'] || "",
+        t: termo,
+        r: String(item['RollBack']).toLowerCase().includes('sim') ? 'Sim' : 'Nao',
+        a: item['Status Adoptiom'] || "",
+        c: item['Status Cliente'] || "",
+        mrr: parseFloat(item['MRR Atual']) || 0,
+        prazo: parseInt(item['Prazo (Deploy até Go live)']) || 0,
+        d: parseInt(item['Prazo (Deploy até Go live)']) || 0,
+        bp: item["Descrição (Unidades/BP's)"] || "",
+        obs: item['Observação'] || "",
+        seg: item['Segmento Principal'] || "",
+        gl: item['Dt. Go-Live (Efetivo)'] || "",
+        inc: String(item['Ocorrencia']).toLowerCase().includes('sim') ? 'Sim' : 'Nao'
+      };
+    });
+
+    // Sincroniza as variáveis para não haver conflito interno
+    if (typeof data !== 'undefined') { data = DATA; }
+
+    // 3. Atualiza o aviso de Online
     const bup = document.getElementById('bup');
-    if(bup) bup.innerText = `🟢 Atualização Automática Online | ${data.length} parceiros`;
-    
-    // 3. Manda o código do Claude redesenhar a tela inteira (Kanban, Gráficos e Tabelas) com os dados novos
+    if (bup) bup.innerText = `🟢 Atualização Automática Online | ${DATA.length} parceiros`;
+
+    // 4. Manda redesenhar tudo com os dados novos e fixos
     rend();
-    if(document.getElementById("p2") && document.getElementById("p2").classList.contains("on")) {
-       bldCh(data);
+    if (document.getElementById("p2") && document.getElementById("p2").classList.contains("on")) {
+       bldCh(DATA);
     }
   })
   .catch(err => {
     console.error("Erro ao ler dados.json da automação:", err);
     const bup = document.getElementById('bup');
-    if(bup) bup.innerText = `⚠️ Lendo dados antigos. Robô ainda não gerou o arquivo.`;
+    if (bup) bup.innerText = `⚠️ Lendo dados antigos. Robô ainda não gerou o arquivo.`;
   });
 // --- FIM DA AUTOMAÇÃO ---
 </script>
