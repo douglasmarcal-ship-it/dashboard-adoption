@@ -38,6 +38,7 @@ jobs:
         
         df = pd.read_csv(url, skiprows=1)
         df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+        df = df.fillna('')
         
         registros = df.to_dict(orient='records')
         
