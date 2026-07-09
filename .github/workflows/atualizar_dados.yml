@@ -1,0 +1,48 @@
+name: Atualizar Dados do Dashboard
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Executa de 1 em 1 hora
+  workflow_dispatch: # Permite rodar manualmente num botão
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout do repositorio
+      uses: actions/checkout@v3
+
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Instalar dependencias
+      run: pip install pandas requests
+
+    - name: Baixar e Converter os Dados da Planilha
+      run: |
+        python -c "
+        import pandas as pd
+        import json
+        
+        # COLOQUE O SEU LINK ENTRE AS ASPAS SIMPLES ABAIXO:
+        url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTDOeEqui_w4j0bSUh9zPz-1yXOAxUB3RT4glNpD1rJzgd01oE61rXmOCVoUMjWzDNph4lsGPFIyC7e/pub?gid=0&single=true&output=csv'
+        
+        df = pd.read_csv(url, skiprows=1)
+        df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+        
+        registros = df.to_dict(orient='records')
+        
+        with open('dados.json', 'w', encoding='utf-8') as f:
+            json.dump(registros, f, ensure_ascii=False, indent=2)
+        "
+
+    - name: Commit e Push dos dados atualizados
+      run: |
+        git config --global user.name 'Data Bot'
+        git config --global user.email 'bot@github.com'
+        git add dados.json
+        git commit -m "Auto: Planilha atualizada via nuvem" || exit 0
+        git push
