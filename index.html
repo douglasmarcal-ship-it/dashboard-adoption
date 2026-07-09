@@ -1747,46 +1747,51 @@ fetch('dados.json?t=' + new Date().getTime())
     // 1. Filtra as linhas vazias
     const dadosLimpos = jsonData.filter(item => item && item['PARCEIRO'] && item['PARCEIRO'] !== 'PARCEIRO' && !String(item['PARCEIRO']).includes('Media d'));
 
-    // 2. TRADUTOR: Atualiza a variável PRINCIPAL (MAIÚSCULA) do seu painel
+    // 2. TRADUTOR CORRIGIDO: Usa exatamente os mesmos apelidos do Claude
     DATA = dadosLimpos.map(item => {
-      let termo = String(item['ID'] || item['Termometro'] || '').toLowerCase();
-      if (termo.includes('verde') || termo.includes('🟢')) termo = 'verde';
-      else if (termo.includes('amarelo') || termo.includes('🟡')) termo = 'amarelo';
-      else if (termo.includes('vermelho') || termo.includes('🔴')) termo = 'vermelho';
-      else termo = 'verde';
+      let termoVal = String(item['ID'] || item['Termometro'] || '').toLowerCase();
+      if (termoVal.includes('verde') || termoVal.includes('🟢')) termoVal = 'verde';
+      else if (termoVal.includes('amarelo') || termoVal.includes('🟡')) termoVal = 'amarelo';
+      else if (termoVal.includes('vermelho') || termoVal.includes('🔴')) termoVal = 'vermelho';
+      else termoVal = 'verde';
 
       return {
         p: item['PARCEIRO'] || "",
+        gl: item['Dt. Go-Live (Efetivo)'] || item['Dt. Go-Live (Previsto)'] || "",
         tipo: item['Tipo'] || "",
         metod: item['Metodologia'] || "",
-        fimadop: item['Dt. Previsão Entrega'] || "",
-        e: item['Etapa Jornada'] || "",
-        t: termo,
-        r: String(item['RollBack']).toLowerCase().includes('sim') ? 'Sim' : 'Nao',
-        a: item['Status Adoptiom'] || "",
-        c: item['Status Cliente'] || "",
+        metod_full: item['Metodologia'] || "",
+        etapa: item['Etapa Jornada'] || "-",
+        termo: termoVal,
+        rb: String(item['RollBack']).toLowerCase().includes('sim') ? 'Sim' : 'Nao',
+        cliente: item['Status Cliente'] || "",
+        adop: item['Status Adoptiom'] || "",
         mrr: parseFloat(item['MRR Atual']) || 0,
         prazo: parseInt(item['Prazo (Deploy até Go live)']) || 0,
-        d: parseInt(item['Prazo (Deploy até Go live)']) || 0,
         bp: item["Descrição (Unidades/BP's)"] || "",
-        obs: item['Observação'] || "",
         seg: item['Segmento Principal'] || "",
-        gl: item['Dt. Go-Live (Efetivo)'] || "",
-        inc: String(item['Ocorrencia']).toLowerCase().includes('sim') ? 'Sim' : 'Nao'
+        gp: "", 
+        obs: item['Observação'] || "",
+        ocorr: String(item['Ocorrencia']).toLowerCase().includes('sim') ? 'Sim' : 'Nao',
+        tipo_inc: item['Tipo.1'] || "",
+        ticket: parseInt(item['Ticket Zendesk']) || 0,
+        regs: []
       };
     });
 
-    // Sincroniza as variáveis para não haver conflito interno
-    if (typeof data !== 'undefined') { data = DATA; }
+    // 3. Atualiza a variável auxiliar que faz os filtros funcionarem
+    if (typeof data !== 'undefined') { 
+        data = DATA.map(r => Object.assign({}, r)); 
+    }
 
-    // 3. Atualiza o aviso de Online
+    // 4. Atualiza o aviso de Online no topo
     const bup = document.getElementById('bup');
     if (bup) bup.innerText = `🟢 Atualização Automática Online | ${DATA.length} parceiros`;
 
-    // 4. Manda redesenhar tudo com os dados novos e fixos
+    // 5. Redesenha a tela (agora os filtros vão encontrar tudo!)
     rend();
     if (document.getElementById("p2") && document.getElementById("p2").classList.contains("on")) {
-       bldCh(DATA);
+       if (typeof bldCh === 'function') bldCh(data);
     }
   })
   .catch(err => {
