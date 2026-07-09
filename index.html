@@ -1740,65 +1740,6 @@ function saveAsHtml(){
 rend();
 // [CORRECAO] Garante que a aba Analises (graficos, indicadores) seja calculada a partir dos dados atuais ja no carregamento da pagina, e nao apenas ao trocar de aba ou importar.
 if(document.getElementById("p2")&&document.getElementById("p2").classList.contains("on")) bldCh(data);
-  // --- INÍCIO DA AUTOMAÇÃO (GITHUB ACTIONS) ---
-fetch('dados.json?t=' + new Date().getTime())
-  .then(response => response.json())
-  .then(jsonData => {
-    // 1. Filtra as linhas vazias
-    const dadosLimpos = jsonData.filter(item => item && item['PARCEIRO'] && item['PARCEIRO'] !== 'PARCEIRO' && !String(item['PARCEIRO']).includes('Media d'));
-
-    // 2. Mapeia os dados usando as propriedades exatas que o Claude espera
-    const dadosAtualizados = dadosLimpos.map(item => {
-      let termoVal = String(item['ID'] || item['Termometro'] || '').toLowerCase();
-      if (termoVal.includes('verde') || termoVal.includes('🟢')) termoVal = 'verde';
-      else if (termoVal.includes('amarelo') || termoVal.includes('🟡')) termoVal = 'amarelo';
-      else if (termoVal.includes('vermelho') || termoVal.includes('🔴')) termoVal = 'vermelho';
-      else termoVal = 'verde';
-
-      return {
-        p: item['PARCEIRO'] || "",
-        gl: item['Dt. Go-Live (Efetivo)'] || item['Dt. Go-Live (Previsto)'] || "",
-        tipo: item['Tipo'] || "",
-        metod: item['Metodologia'] || "",
-        metod_full: item['Metodologia'] || "",
-        etapa: item['Etapa Jornada'] || "-",
-        termo: termoVal,
-        rb: String(item['RollBack']).toLowerCase().includes('sim') ? 'Sim' : 'Nao',
-        cliente: item['Status Cliente'] || "",
-        adop: item['Status Adoptiom'] || "",
-        mrr: parseFloat(item['MRR Atual']) || 0,
-        prazo: parseInt(item['Prazo (Deploy até Go live)']) || 0,
-        bp: item["Descrição (Unidades/BP's)"] || "",
-        seg: item['Segmento Principal'] || "",
-        gp: "", 
-        obs: item['Observação'] || "",
-        ocorr: String(item['Ocorrencia']).toLowerCase().includes('sim') ? 'Sim' : 'Nao',
-        tipo_inc: item['Tipo.1'] || "",
-        ticket: parseInt(item['Ticket Zendesk']) || 0,
-        regs: []
-      };
-    });
-
-    // 3. Atualiza TODAS as variáveis de armazenamento para evitar conflito
-    if (typeof DATA !== 'undefined') { DATA = dadosAtualizados; }
-    if (typeof data !== 'undefined') { data = dadosAtualizados.map(r => Object.assign({}, r)); }
-
-    // 4. Atualiza o cabeçalho
-    const bup = document.getElementById('bup');
-    if (bup) bup.innerText = `🟢 Atualização Automática Online | ${dadosAtualizados.length} parceiros`;
-
-    // 5. Redesenha a tela
-    if (typeof rend === 'function') rend();
-    if (document.getElementById("p2") && document.getElementById("p2").classList.contains("on") && typeof bldCh === 'function') {
-       bldCh(data || DATA);
-    }
-  })
-  .catch(err => {
-    console.error("Erro ao ler dados:", err);
-    const bup = document.getElementById('bup');
-    if (bup) bup.innerText = `⚠️ Lendo dados antigos. Robô ainda não gerou o arquivo.`;
-  });
-// --- FIM DA AUTOMAÇÃO ---
 </script>
 
 
