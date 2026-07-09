@@ -1747,8 +1747,8 @@ fetch('dados.json?t=' + new Date().getTime())
     // 1. Filtra as linhas vazias
     const dadosLimpos = jsonData.filter(item => item && item['PARCEIRO'] && item['PARCEIRO'] !== 'PARCEIRO' && !String(item['PARCEIRO']).includes('Media d'));
 
-    // 2. TRADUTOR CORRIGIDO: Usa exatamente os mesmos apelidos do Claude
-    DATA = dadosLimpos.map(item => {
+    // 2. Mapeia os dados usando as propriedades exatas que o Claude espera
+    const dadosAtualizados = dadosLimpos.map(item => {
       let termoVal = String(item['ID'] || item['Termometro'] || '').toLowerCase();
       if (termoVal.includes('verde') || termoVal.includes('🟢')) termoVal = 'verde';
       else if (termoVal.includes('amarelo') || termoVal.includes('🟡')) termoVal = 'amarelo';
@@ -1779,23 +1779,22 @@ fetch('dados.json?t=' + new Date().getTime())
       };
     });
 
-    // 3. Atualiza a variável auxiliar que faz os filtros funcionarem
-    if (typeof data !== 'undefined') { 
-        data = DATA.map(r => Object.assign({}, r)); 
-    }
+    // 3. Atualiza TODAS as variáveis de armazenamento para evitar conflito
+    if (typeof DATA !== 'undefined') { DATA = dadosAtualizados; }
+    if (typeof data !== 'undefined') { data = dadosAtualizados.map(r => Object.assign({}, r)); }
 
-    // 4. Atualiza o aviso de Online no topo
+    // 4. Atualiza o cabeçalho
     const bup = document.getElementById('bup');
-    if (bup) bup.innerText = `🟢 Atualização Automática Online | ${DATA.length} parceiros`;
+    if (bup) bup.innerText = `🟢 Atualização Automática Online | ${dadosAtualizados.length} parceiros`;
 
-    // 5. Redesenha a tela (agora os filtros vão encontrar tudo!)
-    rend();
-    if (document.getElementById("p2") && document.getElementById("p2").classList.contains("on")) {
-       if (typeof bldCh === 'function') bldCh(data);
+    // 5. Redesenha a tela
+    if (typeof rend === 'function') rend();
+    if (document.getElementById("p2") && document.getElementById("p2").classList.contains("on") && typeof bldCh === 'function') {
+       bldCh(data || DATA);
     }
   })
   .catch(err => {
-    console.error("Erro ao ler dados.json da automação:", err);
+    console.error("Erro ao ler dados:", err);
     const bup = document.getElementById('bup');
     if (bup) bup.innerText = `⚠️ Lendo dados antigos. Robô ainda não gerou o arquivo.`;
   });
