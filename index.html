@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Adoption Center - Sankhya</title>
 <style>
-:root{--bg:#f0f2f5;--card:#fff;--hdr:#fff;--nav:#fff;--sec:#f7f8fa;--inp:#fff;--txt:#1a202c;--txt2:#4a5568;--mute:#9ca3af;--brd:#e5e7eb;--grn:#166534;--grn-bg:#f0fdf4;--grn-b:#22c55e;--blu:#1d4ed8;--blu-bg:#eff6ff;--blu-b:#3b82f6;--yel:#92400e;--yel-bg:#fffbeb;--yel-b:#f59e0b;--red:#991b1b;--red-bg:#fff1f2;--red-b:#f87171;--pur:#5b21b6;--pur-bg:#f5f3ff;--pur-b:#d946ef;--nav-a:#185FA5;--nav-abg:#eff6ff;--tgl:#d1d5db;--proj-bg:#fdf4ff;--proj-b:#d946ef}
+:root{--bg:#f0f2f5;--card:#fff;--hdr:#fff;--nav:#fff;--sec:#f7f8fa;--inp:#fff;--txt:#1a202c;--txt2:#4a5568;--mute:#9ca3af;--brd:#e5e7eb;--grn:#166534;--grn-bg:#f0fdf4;--grn-b:#22c55e;--blu:#1d4ed8;--blu-bg:#eff6ff;--blu-b:#3b82f6;--yel:#92400e;--yel-bg:#fffbeb;--yel-b:#f59e0b;--red:#991b1b;--red-bg:#fff1f2;--red-b:#f87171;--pur:#5b21b6;--pur-bg:#f5f3ff;--pur-b:#8b5cf6;--nav-a:#185FA5;--nav-abg:#eff6ff;--tgl:#d1d5db;--proj-bg:#fdf4ff;--proj-b:#d946ef}
 [data-theme=dark]{--bg:#0b0f19;--card:#111827;--hdr:#1f2937;--nav:#1f2937;--sec:#1f2937;--inp:#374151;--txt:#f9fafb;--txt2:#d1d5db;--mute:#6b7280;--brd:#374151;--grn:#22c55e;--grn-bg:#064e3b;--grn-b:#10b981;--blu:#3b82f6;--blu-bg:#1e3a8a;--blu-b:#60a5fa;--yel:#f59e0b;--yel-bg:#78350f;--yel-b:#fbbf24;--red:#ef4444;--red-bg:#7f1d1d;--red-b:#f87171;--pur:#a78bfa;--pur-bg:#4c1d95;--pur-b:#c084fc;--nav-a:#3b82f6;--nav-abg:#1e3a8a;--tgl:#4b5563;--proj-bg:#4a044e;--proj-b:#f472b6}
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif}
 body{background:var(--bg);color:var(--txt);padding-bottom:60px;transition:background 0.3s,color 0.3s}
@@ -62,35 +62,46 @@ main{padding:2rem}
 </main>
 
 <script>
-// 1. Definição da Origem de Dados unificada para a arquitetura automatizada
+// Variável global que armazenará os dados baixados da planilha
 let data = [];
 
-// Função essencial que substitui a sua importação de planilha manual
+// Função que busca o arquivo dados.json de forma segura
 async function carregarDadosAutomáticos() {
   try {
-    // Busca o arquivo JSON gerado pelo script automatizado do GitHub Actions
-    const response = await fetch('dados.json');
-    if (!response.ok) throw new Error('Arquivo de dados (dados.json) ainda não gerado ou não encontrado.');
+    // 1. Busca o arquivo JSON com carimbo de tempo para evitar cache do navegador
+    const response = await fetch(`dados.json?t=${new Date().getTime()}`);
+    if (!response.ok) throw new Error('Arquivo dados.json não encontrado.');
     
-    data = await response.json();
+    const rawData = await response.json();
     
-    // Atualiza as tags visuais de contagem com base na planilha lida em tempo real
+    // 2. Filtragem de Segurança: Remove linhas vazias ou metadados indesejados da planilha
+    data = rawData.filter(item => item && item['PARCEIRO'] && item['PARCEIRO'] !== 'PARCEIRO' && !String(item['PARCEIRO']).includes('Media d'));
+    
+    // 3. Atualiza o indicador de sucesso no cabeçalho
     document.getElementById('bup').innerText = `Atualização Automática | ${data.length} parceiros monitorados`;
     
-    // Dispara a renderização e cálculos visuais nativos do seu dashboard
-    rend();
-    
-    // Se a aba de gráficos estiver ativa, força o redesenho automático dos KPI's
-    if(document.getElementById("p2") && document.getElementById("p2").classList.contains("on")) {
-       bldCh(data);
+    // 4. Executa a renderização das telas originais do Claude
+    try {
+      rend();
+    } catch (e) {
+      console.warn("Aviso na renderização geral:", e);
     }
+    
+    try {
+      if(document.getElementById("p2") && document.getElementById("p2").classList.contains("on")) {
+         bldCh(data);
+      }
+    } catch (e) {
+      console.warn("Aviso na renderização dos gráficos:", e);
+    }
+
   } catch (error) {
-    console.error("Aviso de Inicialização:", error);
-    document.getElementById('bup').innerText = `Aguardando pipeline automatizado gerar 'dados.json'`;
+    console.error("Erro na leitura automatizada:", error);
+    document.getElementById('bup').innerText = `Erro ao carregar dados. Verifique o console (F12).`;
   }
 }
 
-// 2. Lógica Base do Seu Dashboard (Estrutura original limpa de dados pesados estáticos)
+// Lógica Visual Original Preservada
 function tglThm(){
   const html = document.documentElement;
   const t = html.getAttribute('data-theme')==='dark'?'light':'dark';
@@ -105,26 +116,31 @@ function chgPg(n){
   if(n===2) bldCh(data);
 }
 
-// Lógicas de Renderização dinâmicas criadas pelo Claude que leem a variável 'data'
+// Exemplo de preenchimento dinâmico dos cartões base do Claude
 function rend(){
-  if(data.length === 0) return;
-  
-  // Exemplo de atualização de listagem/kpis dinâmicos herdados do seu código original:
   const resumo = document.getElementById('cards-resumo');
-  if(resumo) {
+  if(resumo && data.length > 0) {
     const totalMRR = data.reduce((acc, curr) => acc + (parseFloat(curr['MRR Atual']) || 0), 0);
-    resumo.innerHTML = `<h3>Total de Clientes: ${data.length}</h3><p>Volume Financeiro Sob Monitoramento: R$ ${totalMRR.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>`;
+    resumo.innerHTML = `
+      <div style="display:flex; gap:20px; margin-bottom:20px;">
+        <div style="background:var(--card); padding:20px; border-radius:8px; border:1px solid var(--brd); flex:1;">
+          <div style="color:var(--mute); font-size:0.85rem;">Total de Parceiros</div>
+          <div style="font-size:1.8rem; font-weight:700; margin-top:5px;">${data.length}</div>
+        </div>
+        <div style="background:var(--card); padding:20px; border-radius:8px; border:1px solid var(--brd); flex:1;">
+          <div style="color:var(--mute); font-size:0.85rem;">MRR Total Monitorado</div>
+          <div style="font-size:1.8rem; font-weight:700; margin-top:5px; color:var(--grn-b);">R$ ${totalMRR.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+        </div>
+      </div>
+    `;
   }
-  
-  // Injeta as linhas da tabela e cartões do kanban dinamicamente mapeando as colunas descobertas no seu CSV ("Termometro", "Etapa Jornada", etc.)
 }
 
 function bldCh(ctxData){
-  // Reinicializa os gráficos Chart.js usando os dados dinâmicos baixados
-  console.log("Gráficos atualizados com sucesso utilizando os novos dados automatizados.");
+  console.log("Gráficos prontos para receber a estrutura do Chart.js.");
 }
 
-// Execução ao abrir a página
+// Inicia automaticamente o processo dinâmico
 window.addEventListener('DOMContentLoaded', carregarDadosAutomáticos);
 </script>
 </body>
