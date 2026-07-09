@@ -1765,5 +1765,45 @@ setInterval(function() {
     });
   }
 }, 800);
+  // --- INÍCIO DO CRONÔMETRO E LIMPEZA VISUAL ---
+// 1. Oculta automaticamente qualquer botão de importar planilha ou salvar HTML
+const st = document.createElement('style');
+st.innerHTML = `
+  input[type="file"], 
+  button[onclick*="save"], 
+  button[onclick*="import"],
+  label[for*="file"] { 
+    display: none !important; 
+  }
+`;
+document.head.appendChild(st);
+
+// 2. Cria o cronômetro de 10 minutos (600 segundos)
+let tempoRestante = 600; 
+
+setInterval(() => {
+    tempoRestante--;
+    
+    // Calcula minutos e segundos
+    let min = Math.floor(tempoRestante / 60);
+    let seg = tempoRestante % 60;
+    
+    // Formata os segundos com dois dígitos (ex: 09, 05)
+    seg = seg < 10 ? '0' + seg : seg;
+
+    // Atualiza a frase no cabeçalho do painel
+    const bup = document.getElementById('bup');
+    if (bup) {
+        bup.innerHTML = `🟢 Online | Nova leitura da planilha em: <b>${min}:${seg}</b>`;
+    }
+    
+    // Quando o cronômetro zera, a página recarrega automaticamente
+    // (O parâmetro '?t=' garante que o navegador vai ignorar o cache e puxar a versão mais recente)
+    if (tempoRestante <= 0) {
+        if (bup) bup.innerHTML = "🔄 Sincronizando com a planilha...";
+        window.location.href = window.location.pathname + '?t=' + new Date().getTime();
+    }
+}, 1000);
+// --- FIM DO CRONÔMETRO ---
 </script>
 </body></html>
