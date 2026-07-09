@@ -34,7 +34,7 @@ jobs:
         import json
         
         # COLOQUE O SEU LINK ENTRE AS ASPAS SIMPLES ABAIXO:
-        url = 'COLE_AQUI_O_LINK_DA_SUA_PLANILHA'
+        url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTDOeEqui_w4j0bSUh9zPz-1yXOAxUB3RT4glNpD1rJzgd01oE61rXmOCVoUMjWzDNph4lsGPFIyC7e/pub?gid=0&single=true&output=csv'
         
         df = pd.read_csv(url, skiprows=1)
         df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
